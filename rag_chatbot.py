@@ -18,12 +18,12 @@ def detect_language(text: str) ->str:
     
 
 class RAGChatBot:
-    def __init__(self):
+    def __init__(self, chunks =None):
         print("Initializing RAG Chatbot")
 
         self.embeddings = Embedding().get_embedding_function()
         self.vectorstore = None
-        self.temp_dir = "temp_uploads"
+        self.documents = []
         
         groq_key = os.environ.get("GROQ_API_KEY")
         if not groq_key:
@@ -34,6 +34,10 @@ class RAGChatBot:
             temperature=0,
             groq_api_key = groq_key
         )
+        if chunks:
+            self.documents.extend(chunks)
+            self.load_documents(chunks)
+
         print("✅ Ready!\n")
 
     def load_documents(self,chunks):
@@ -46,14 +50,11 @@ class RAGChatBot:
             print("⚠️ No valid chunks found!")
             return
         
-        if self.vectorstore is None:
-            self.vectorstore = Chroma.from_documents(
-                documents=chunks,
-                embedding=self.embeddings
-            )
-        else:
-            self.vectorstore.add_documents(chunks)
-        print(f"✅ Loaded {len(chunks)} chunks into memory")
+        self.vectorstore = Chroma.from_documents(
+            documents=valid_chunks,
+            embedding=self.embeddings
+        )
+        print(f"✅ Loaded {len(valid_chunks)} chunks")
 
     def ask(self,question, k=3,fetch_k = 10, source_filter=None):
 
@@ -120,5 +121,31 @@ Answer:"""
         }
 
     def clear_all(self):
+        """Debug version to find where data is stored"""
+        print("=" * 50)
+        print("DEBUG: Starting clear_all")
+        
+        if self.vectorstore is not None:
+            # Check where Chroma is storing data
+            if hasattr(self.vectorstore, '_persist_directory'):
+                print(f"📁 Persist directory: {self.vectorstore._persist_directory}")
+            
+            if hasattr(self.vectorstore, '_collection'):
+                # Count before deletion
+                count_before = self.vectorstore._collection.count()
+                print(f"📊 Chunks before clear: {count_before}")
+                
+                # Try to delete
+                all_ids = self.vectorstore._collection.get()['ids']
+                if all_ids:
+                    self.vectorstore._collection.delete(ids=all_ids)
+                    print(f"✅ Deleted {len(all_ids)} chunks")
+                
+                # Count after deletion
+                count_after = self.vectorstore._collection.count()
+                print(f"📊 Chunks after clear: {count_after}")
+        
         self.vectorstore = None
-        print("✅ Cleared vector store")
+        self.documents = []
+        
+        print("=" * 50)
