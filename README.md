@@ -5,10 +5,15 @@ Supports English & Nepali with source-backed answers.
 
 🚀 Features
 📂 Upload PDF, DOCX, TXT
+
 🌐 Multilingual (English 🇬🇧 + Nepali 🇳🇵)
+
 💬 Chat-based interface
+
 📄 Answers with source references
+
 🔍 Document-specific filtering
+
 🗑️ Clear chat & documents
 
 🛠️ Tech Stack
@@ -22,7 +27,9 @@ Groq (LLaMA 3.3 70B)
 ⚙️ Run Locally
 
 git clone https://github.com/soniya-thapa14/Document-Chatbot.git
+
 cd document-chatbot
+
 pip install -r requirements.txt
 
 Create .env:
