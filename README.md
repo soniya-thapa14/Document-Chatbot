@@ -4,6 +4,7 @@ A RAG-based document chatbot that allows users to upload files and ask questions
 Supports English & Nepali with source-backed answers.
 
 🚀 Features
+
 📂 Upload PDF, DOCX, TXT
 
 🌐 Multilingual (English 🇬🇧 + Nepali 🇳🇵)
